@@ -31,6 +31,17 @@ def read_word_sensor(adr):
 	else:#plus
 		return val
 
+def get_temp():
+    temp = read_word_sensor(TEMP_OUT)
+    x = temp / 340 + 36.53      # data sheet(register map)記載の計算式.
+    return x
+
+def getGyro():
+    x = read_word_sensor(GYRO_XOUT)/ 131.0
+    y = read_word_sensor(GYRO_YOUT)/ 131.0
+    z = read_word_sensor(GYRO_ZOUT)/ 131.0
+    return [x, y, z]
+
 def getAccel():
 	x =read_word_sensor(ACCEL_XOUT)/16384.0
 	y =read_word_sensor(ACCEL_YOUT)/16384.0
@@ -54,6 +65,7 @@ if __name__ == "__main__":
 	while True:
 		try:
 			ax, ay, az = getAccel()
+			gx, gy, gz = getGyro() 
 
 			roll, pitch, yaw = calcEuler(ax,ay,az)
 			q = euler2quaternion(roll,pitch,yaw) #オイラー角をクォータ二オンに変換

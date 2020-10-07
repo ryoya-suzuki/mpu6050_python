@@ -14,9 +14,13 @@ ACCEL_YOUT = 0x3d
 ACCEL_ZOUT = 0x3f
 PWR_MGMT_1 = 0x6b
 PWR_MGMT_2 = 0x6c
+LPF_ADDR = 0x1a
 
 bus = smbus.SMBus(1)
 bus.write_byte_data(DEV_ADDR, PWR_MGMT_1, 0)
+#LRF setting
+bus.write_byte_data(DEV_ADDR, LPF_ADDR, 0x03)
+
 
 def read_word(adr):
 	high = bus.read_byte_data(DEV_ADDR, adr)

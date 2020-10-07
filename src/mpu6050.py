@@ -69,7 +69,7 @@ def euler2quaternion(x,y,z):
 if __name__ == "__main__":
 	rospy.init_node("mpu6050")
 	br = tf.TransformBroadcaster()
-	pub = rospy.Publisher("imu", Imu, queue_size=1)
+	pub = rospy.Publisher("mpu6050", Imu, queue_size=1)
 		
 	while True:
 		try:

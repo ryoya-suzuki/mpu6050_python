@@ -12,6 +12,10 @@ DEV_ADDR = 0x68
 ACCEL_XOUT = 0x3b
 ACCEL_YOUT = 0x3d
 ACCEL_ZOUT = 0x3f
+TEMP_OUT = 0x41
+GYRO_XOUT = 0x43
+GYRO_YOUT = 0x45
+GYRO_ZOUT = 0x47
 PWR_MGMT_1 = 0x6b
 PWR_MGMT_2 = 0x6c
 LPF_ADDR = 0x1a
@@ -65,6 +69,7 @@ def euler2quaternion(x,y,z):
 if __name__ == "__main__":
 	rospy.init_node("mpu6050")
 	br = tf.TransformBroadcaster()
+	pub = rospy.Publisher("imu", Imu, queue_size=1)
 		
 	while True:
 		try:
@@ -74,6 +79,20 @@ if __name__ == "__main__":
 			roll, pitch, yaw = calcEuler(ax,ay,az)
 			q = euler2quaternion(roll,pitch,yaw) #オイラー角をクォータ二オンに変換
 	
+			imu = Imu()
+			imu.header.frame_id = "mpu6050"
+
+			imu.orientation = q
+
+			imu.angular_velocity.x = gx
+			imu.angular_velocity.y = gy
+			imu.angular_velocity.z = gz
+
+			imu.linear_acceleration.x = ax
+			imu.linear_acceleration.y = ay
+			imu.linear_acceleration.z = az
+			
+			pub.publish(imu)
 			br.sendTransform((0,0,0), tf.transformations.quaternion_from_euler(roll,pitch,yaw), rospy.Time.now(), "mpu6050", "map")
 
 			#print "Roll:[%s]"%str(roll)
